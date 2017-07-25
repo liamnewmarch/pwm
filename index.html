@@ -4,6 +4,46 @@
     <title> Web Audio PulseOscillatorNode </title>
   </head>
   <body>
-    <p> PulseOscillatorNode </p>
+    <p> Click the button to run the following events in sequence: </p>
+    <ul>
+      <li> 0s: Start new PulseOscillatorNode. </li>
+      <li> 1s: Start modulating pulseWidth value from 0. </li>
+      <li> 2s: Stop modulating pulseWidth value at 0.8. </li>
+      <li> 3s: Stop PulseOscillatorNode. </li>
+    </ul>
+    <button> Start </button>
+    <script src="pulse-oscillator-node.js"></script>
+    <script>
+
+const audioContext = new AudioContext({
+  latencyHint: 'interactive',
+});
+
+const gain = new GainNode(audioContext, {
+  gain: 0.1,
+});
+
+gain.connect(audioContext.destination);
+
+const button = document.querySelector('button');
+button.addEventListener('click', () => {
+
+  const pulseOscillator = new PulseOscillatorNode(audioContext, {
+    frequency: 220,
+    pulseWidth: 0,
+  });
+
+  const inOneSecond = audioContext.currentTime + 1;
+  const inTwoSeconds = audioContext.currentTime + 2;
+  const inThreeSeconds = audioContext.currentTime + 3;
+
+  pulseOscillator.connect(gain);
+  pulseOscillator.start();
+  pulseOscillator.pulseWidth.linearRampToValueAtTime(0, inOneSecond);
+  pulseOscillator.pulseWidth.linearRampToValueAtTime(.8, inTwoSeconds);
+  pulseOscillator.stop(inThreeSeconds);
+});
+
+    </script>
   </body>
 </html>
